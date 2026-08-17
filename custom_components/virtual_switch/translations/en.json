@@ -1,0 +1,15 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Virtual Switch",
+        "data": {"name": "Name"}
+      }
+    },
+    "error": {"name_required": "Name is required"},
+    "abort": {
+      "already_configured": "A Virtual Switch with this name already exists",
+      "name_required": "Name is required"
+    }
+  }
+}

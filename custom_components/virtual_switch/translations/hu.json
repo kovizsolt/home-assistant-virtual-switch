@@ -1,0 +1,15 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Virtual Switch hozzáadása",
+        "data": {"name": "Név"}
+      }
+    },
+    "error": {"name_required": "A név megadása kötelező"},
+    "abort": {
+      "already_configured": "Már létezik ilyen nevű Virtual Switch",
+      "name_required": "A név megadása kötelező"
+    }
+  }
+}

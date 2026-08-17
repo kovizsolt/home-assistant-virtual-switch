@@ -1,0 +1,16 @@
+{
+  "domain": "virtual_switch",
+  "name": "Virtual Switch",
+  "version": "0.1.0002",
+  "documentation": "https://example.local/virtual_switch",
+  "issue_tracker": "https://example.local/virtual_switch/issues",
+  "codeowners": [
+    "k.xzsolt@gmail.com"
+  ],
+  "dependencies": [
+    "frontend",
+    "lovelace"
+  ],
+  "iot_class": "local_push",
+  "config_flow": true
+}
