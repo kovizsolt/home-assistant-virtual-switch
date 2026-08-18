@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">Virtual Switch</title>
+  <defs>
+    <linearGradient id="virtual-bg" x1="36" y1="28" x2="220" y2="228" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#45C7F4"/>
+      <stop offset="1" stop-color="#1677D2"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="12" width="232" height="232" rx="54" fill="url(#virtual-bg)"/>
+  <path d="M75 104a54 54 0 0 1 96-26m14 74a54 54 0 0 1-100 23"
+        fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="2 21"/>
+  <path d="M74 96h108a34 34 0 0 1 0 68H74a34 34 0 0 1 0-68Z"
+        fill="#fff" stroke="#0E64B4" stroke-width="8"/>
+  <circle cx="178" cy="130" r="23" fill="#18A96B"/>
+  <path d="m169 130 6 6 13-14" fill="none" stroke="#fff" stroke-width="6"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

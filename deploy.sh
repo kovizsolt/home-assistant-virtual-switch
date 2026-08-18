@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="$SCRIPT_DIR/custom_components/virtual_switch"
 VERSION_FILE="$SCRIPT_DIR/VERSION"
 MANIFEST="$SRC_DIR/manifest.json"
+BRAND_ICON_GENERATOR="$SCRIPT_DIR/../generate-brand-icons.sh"
 CONTAINER="homeassistant"
 DEST_IN_CONTAINER="/config/custom_components/virtual_switch"
 
@@ -34,6 +35,7 @@ with open(path, "w") as file:
 PYEOF
 
 echo "== Verzió: $new_version =="
+"$BRAND_ICON_GENERATOR" "$SRC_DIR"
 find "$SRC_DIR" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 docker exec "$CONTAINER" rm -rf "$DEST_IN_CONTAINER"
 docker cp "$SRC_DIR" "$CONTAINER:$DEST_IN_CONTAINER"
