@@ -3,22 +3,22 @@
 ## 1. Cél
 
 A `virtual_switch` integráció egy valós smart kapcsoló elérhetőségét és belső állapotát
-szimulálja. Egy config entry egy Device-ot és pontosan három switch entitást hoz létre:
+szimulálja. Egy config entry egy Device-ot, két switch entitást és egy select entitást hoz létre:
 
 | Entitás | Szerep |
 |---|---|
 | `switch.<name>_main` | A szimulált smart kapcsoló. |
-| `switch.<name>_online` | A Main elérhetőségét szabályozza. |
 | `switch.<name>_internal` | Az eszköz tényleges, belső on/off állapota. |
+| `select.<name>_status` | A Main elérhetőségét és jelentett állapotát szabályozza. |
 
 ## 2. Tárolt állapot
 
-Pontosan két logikai érték tárolható:
+Két állapotérték tárolódik:
 
 | Érték | Kezdőérték | Jelentés |
 |---|---|---|
 | `internal_state` | `False` | Az egyetlen on/off állapot-igazságforrás. |
-| `online` | `True` | A Main elérhető-e. |
+| `status` | `online` | A szimulált eszköz kiválasztott státusza. |
 
 Nincs külön `main_state`, `reported_state`, utoljára ismert állapot vagy szinkronizáló
 állapotgép.
@@ -27,18 +27,19 @@ Nincs külön `main_state`, `reported_state`, utoljára ismert állapot vagy szi
 
 ### Main
 
-- `is_on` közvetlenül `internal_state`.
-- `available` közvetlenül `online`.
-- ONLINE állapotban a Main kapcsolása módosítja az `internal_state` értékét.
-- OFFLINE állapotban a Main valódi HA `unavailable`, ezért nem vezérelhető.
+- `online` státuszban az `is_on` közvetlenül `internal_state`.
+- Az `available` és a nem-online `is_on` értékét a státuszdefiníció adja.
+- `online` állapotban a Main kapcsolása módosítja az `internal_state` értékét.
+- Más státuszban a Main parancsa nem módosítja az Internal állapotot.
 - A Main nem tárol saját állapotot.
 
-### Online
+### Status
 
-- `is_on` közvetlenül `online`.
-- Kikapcsolása csak `online=False` értéket állít; az `internal_state` változatlan.
-- Bekapcsolása csak `online=True` értéket állít. A Main elérhetővé válik, és közvetlenül
-  az Internal aktuális értékével jelenik meg.
+- Fix opciói: `online`, `unavailable`, `unknown`, `error`.
+- Egyedi opciók formátuma: `<name>[:available][:is_on]`.
+- Az egyedi alapérték `available=True`, `is_on=None`.
+- A kiválasztás az `internal_state` értékét nem módosítja.
+- A saját dashboard-kártya az opciókat dinamikus, rádiógombszerű gombokként jeleníti meg.
 
 ### Internal
 
@@ -48,27 +49,24 @@ Nincs külön `main_state`, `reported_state`, utoljára ismert állapot vagy szi
 
 ## 4. Állapottábla
 
-| `online` | Művelet | Új `online` | Új `internal_state` | Main HA-állapot |
-|---|---|---|---|---|
-| `True` | Main ON | `True` | `True` | `on` |
-| `True` | Main OFF | `True` | `False` | `off` |
-| `True` | Internal ON/OFF | `True` | kért érték | az Internal értéke |
-| `True` | Online OFF | `False` | változatlan | `unavailable` |
-| `True` | Online ON | `True` | változatlan | az Internal értéke |
-| `False` | Main ON/OFF service | `False` | változatlan | `unavailable` |
-| `False` | Internal ON/OFF | `False` | kért érték | `unavailable` |
-| `False` | Online ON | `True` | változatlan | az Internal értéke |
-| `False` | Online OFF | `False` | változatlan | `unavailable` |
+| Státusz | `available` | Main `is_on` / HA-állapot |
+|---|---:|---|
+| `online` | `True` | `internal_state` → `on`/`off` |
+| `unavailable` | `False` | `None` → `unavailable` |
+| `unknown` | `True` | `None` → `unknown` |
+| `error` | `True` | `None` → `unknown` |
+| custom | konfigurált, alapból `True` | konfigurált, alapból `None` |
 
 Minden művelet idempotens. Egy tényleges változás pontosan egy mentést és egy
 dispatcher-frissítést okoz; változatlan érték beállítása egyiket sem.
 
 ## 5. Perzisztencia
 
-- Csak az `internal_state` és az `online` tárolódik config entrynként HA `Store`-ban.
+- Csak az `internal_state` és a `status` tárolódik config entrynként HA `Store`-ban.
+- A régi boolean `online` tárolóérték betöltéskor `online`/`unavailable` státuszra migrálódik.
 - Újraindítás után mindkét érték visszaáll.
 - Hiányzó tároló esetén a kezdőértékek használatosak.
-- Sérült vagy nem boolean tároló esetén figyelmeztetés naplózandó és a kezdőértékek
+- Sérült vagy érvénytelen tároló esetén figyelmeztetés naplózandó és a kezdőértékek
   használatosak.
 - Config entry törlésekor a saját Store törlendő.
 
@@ -78,9 +76,8 @@ dispatcher-frissítést okoz; változatlan érték beállítása egyiket sem.
 - Mindhárom entitás egy közös Device-hoz tartozik.
 - A `custom:virtual-switch-card` megjelenik a grafikus kártyaválasztóban, YAML nélkül
   hozzáadható, és a grafikus szerkesztő a VirtualSwitch Main entitásaira szűr.
-- Egy Main entity ID-ból automatikusan megtalálja az Internal és Online entitást.
-- A kártya csak szabványos HA entity row-kat és service callokat használ; nincs benne
-  állapotlogika.
+- Egy Main entity ID-ból automatikusan megtalálja az Internal és Status entitást.
+- A státuszgombok a szabványos `select.select_option` műveletet hívják.
 - A resource automatikusan, verzióparaméterrel regisztrálódik.
 
 ## 7. TimedSwitch együttműködés
@@ -93,12 +90,12 @@ dispatcher-frissítést okoz; változatlan érték beállítása egyiket sem.
 | Teszt | Kezdőállapot | Művelet | Elvárás |
 |---|---|---|---|
 | T1 | online, Internal OFF | Internal ON | Main `on`, Internal `on` |
-| T2 | online, Internal ON | Online OFF | Main `unavailable`, Internal `on` |
-| T3 | offline, Internal ON | Internal OFF | Main `unavailable`, Internal `off` |
-| T4 | offline, Internal OFF | Internal ON | Main `unavailable`, Internal `on` |
-| T5 | offline, Internal ON | Online ON | Main elérhető és `on` |
-| T6 | offline, Internal OFF | Online ON | Main elérhető és `off` |
+| T2 | online, Internal ON | Status unavailable | Main `unavailable`, Internal `on` |
+| T3 | unavailable, Internal ON | Internal OFF | Main `unavailable`, Internal `off` |
+| T4 | unavailable, Internal OFF | Internal ON | Main `unavailable`, Internal `on` |
+| T5 | unavailable, Internal ON | Status online | Main elérhető és `on` |
+| T6 | unavailable, Internal OFF | Status online | Main elérhető és `off` |
 | T7 | online, Internal OFF | Main ON | Internal és Main `on` |
-| T8 | offline, Internal OFF | Main ON service | Internal változatlan, Main `unavailable` |
+| T8 | unavailable, Internal OFF | Main ON service | Internal változatlan, Main `unavailable` |
 | T9 | tetszőleges | azonos érték ismétlése | változatlan, nincs mentés/frissítési loop |
-| T10 | offline, Internal ON | mentés és újratöltés | offline, Internal ON áll vissza |
+| T10 | error, Internal ON | mentés és újratöltés | error, Internal ON áll vissza |

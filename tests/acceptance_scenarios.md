@@ -1,25 +1,27 @@
 # Virtual Switch elfogadási forgatókönyvek
 
-## Offline állapotváltozás
+## Elérhetőségi állapotváltozás
 
 ```text
-[online=ON, internal=OFF, main=OFF]
-  --online OFF-->
-[online=OFF, internal=OFF, main=unavailable]
+[status=online, internal=OFF, main=OFF]
+  --status unavailable-->
+[status=unavailable, internal=OFF, main=unavailable]
   --internal ON-->
-[online=OFF, internal=ON, main=unavailable]
-  --online ON-->
-[online=ON, internal=ON, main=ON]
+[status=unavailable, internal=ON, main=unavailable]
+  --status error-->
+[status=error, internal=ON, main=unknown]
+  --status online-->
+[status=online, internal=ON, main=ON]
 ```
 
 ## Online állapotváltozás
 
 ```text
-[online=ON, internal=OFF, main=OFF]
+[status=online, internal=OFF, main=OFF]
   --internal ON-->
-[online=ON, internal=ON, main=ON]
+[status=online, internal=ON, main=ON]
   --main OFF-->
-[online=ON, internal=OFF, main=OFF]
+[status=online, internal=OFF, main=OFF]
 ```
 
 ## UI-vezérelt kártya-hozzáadás
@@ -30,7 +32,7 @@ Dashboard szerkesztése
   -> Virtual Switch Card
   -> Virtual Switch Main kiválasztása
   -> Mentés
-  -> Main + Online + Internal egyetlen kártyán
+  -> Main + Internal + dinamikus státuszgombok egyetlen kártyán
 ```
 
 A folyamat nem igényel YAML-szerkesztést, frontend fájlmásolást vagy kézi resource-bejegyzést.

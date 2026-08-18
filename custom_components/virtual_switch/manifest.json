@@ -1,7 +1,7 @@
 {
   "domain": "virtual_switch",
   "name": "Virtual Switch",
-  "version": "0.1.0010",
+  "version": "0.2.0005",
   "documentation": "https://example.local/virtual_switch",
   "issue_tracker": "https://example.local/virtual_switch/issues",
   "codeowners": [

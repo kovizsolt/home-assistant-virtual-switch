@@ -9,11 +9,20 @@ from homeassistant.components.lovelace.resources import ResourceStorageCollectio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import storage
 from homeassistant.loader import async_get_integration
 from homeassistant.util import slugify
 
-from .const import CARD_FILENAME, CARD_URL, DOMAIN, PLATFORMS, STORE_KEY, STORE_VERSION
+from .const import (
+    CARD_FILENAME,
+    CARD_URL,
+    DOMAIN,
+    PLATFORMS,
+    STORE_KEY,
+    STORE_VERSION,
+    SUFFIX_ONLINE,
+)
 from .controller import Controller
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,6 +55,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     slug = slugify(entry.title)
     controller = Controller(hass, entry)
     await controller.async_setup()
+    entity_registry = er.async_get(hass)
+    legacy_online_entity = entity_registry.async_get_entity_id(
+        "switch", DOMAIN, f"{entry.entry_id}_{SUFFIX_ONLINE}"
+    )
+    if legacy_online_entity is not None:
+        entity_registry.async_remove(legacy_online_entity)
     dr.async_get(hass).async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, entry.entry_id)},
@@ -54,8 +69,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         model="Simulated switch with connectivity",
     )
     hass.data[DOMAIN][entry.entry_id] = {"controller": controller, "slug": slug}
+    entry.async_on_unload(entry.add_update_listener(_async_reload_entry))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
+
+
+async def _async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -68,4 +88,3 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     store = storage.Store(hass, STORE_VERSION, f"{DOMAIN}/{entry.entry_id}/{STORE_KEY}.json")
     await store.async_remove()
-

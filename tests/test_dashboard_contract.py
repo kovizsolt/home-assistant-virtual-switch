@@ -26,15 +26,17 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn("getEntitySuggestion", self.card)
         self.assertIn('integration: "virtual_switch"', self.card)
 
-    def test_card_discovers_all_three_switches(self):
+    def test_card_discovers_main_internal_and_status(self):
         self.assertIn("_internal", self.card)
-        self.assertIn("_online", self.card)
-        self.assertIn("loadCardHelpers", self.card)
+        self.assertIn("_status", self.card)
+        self.assertIn('document.createElement("ha-card")', self.card)
+        self.assertIn('radio.type = "radio"', self.card)
+        self.assertIn('callService("select", "select_option"', self.card)
 
     def test_main_uses_native_home_assistant_availability(self):
         switch_source = (COMPONENT / "switch.py").read_text()
         self.assertIn("def available(self)", switch_source)
-        self.assertIn("return self.controller.online", switch_source)
+        self.assertIn("return self.controller.main_available", switch_source)
         self.assertNotIn("reported_state", switch_source)
 
     def test_no_state_synchronization_loop_exists(self):
@@ -42,6 +44,10 @@ class DashboardContractTests(unittest.TestCase):
         self.assertNotIn("state_changed", controller_source)
         self.assertNotIn("reported_state", controller_source)
         self.assertNotIn("async_track", controller_source)
+
+    def test_legacy_online_entity_is_removed_during_migration(self):
+        self.assertIn("legacy_online_entity", self.init)
+        self.assertIn("entity_registry.async_remove", self.init)
 
     def test_main_command_is_a_method_not_a_property(self):
         controller_source = (COMPONENT / "controller.py").read_text()

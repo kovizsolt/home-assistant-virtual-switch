@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import DeviceInfo
 
-from .const import DOMAIN, SUFFIX_INTERNAL, SUFFIX_MAIN, SUFFIX_ONLINE
+from .const import DOMAIN, SUFFIX_INTERNAL, SUFFIX_MAIN
 from .controller import Controller
 
 
@@ -17,7 +17,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     controller: Controller = bucket["controller"]
     slug: str = bucket["slug"]
     async_add_entities(
-        [MainSwitch(controller, slug), InternalSwitch(controller, slug), OnlineSwitch(controller, slug)]
+        [MainSwitch(controller, slug), InternalSwitch(controller, slug)]
     )
 
 
@@ -49,12 +49,12 @@ class MainSwitch(_BaseSwitch):
         self._attr_icon = "mdi:toggle-switch"
 
     @property
-    def is_on(self) -> bool:
-        return self.controller.internal_state
+    def is_on(self) -> bool | None:
+        return self.controller.main_is_on
 
     @property
     def available(self) -> bool:
-        return self.controller.online
+        return self.controller.main_available
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -81,19 +81,3 @@ class InternalSwitch(_BaseSwitch):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         await self.controller.async_internal(False)
-
-
-class OnlineSwitch(_BaseSwitch):
-    def __init__(self, controller: Controller, slug: str) -> None:
-        super().__init__(controller, slug, SUFFIX_ONLINE, "Online")
-        self._attr_icon = "mdi:lan-connect"
-
-    @property
-    def is_on(self) -> bool:
-        return self.controller.online
-
-    async def async_turn_on(self, **kwargs: Any) -> None:
-        await self.controller.async_online(True)
-
-    async def async_turn_off(self, **kwargs: Any) -> None:
-        await self.controller.async_online(False)

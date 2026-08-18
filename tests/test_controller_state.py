@@ -21,6 +21,7 @@ def _load(name):
     return module
 
 
+_load("const")
 state = _load("state")
 
 
@@ -65,7 +66,39 @@ class VirtualSwitchStateTests(unittest.TestCase):
         self.assertFalse(device.set_online(False))
         self.assertFalse(device.set_internal(True))
 
+    def test_fixed_unknown_and_error_are_available_but_indeterminate(self):
+        for status_name in ("unknown", "error"):
+            device = state.VirtualSwitchState(status=status_name, internal_state=True)
+            self.assertTrue(device.main_available)
+            self.assertIsNone(device.main_is_on)
+            self.assertTrue(device.internal_state)
+
+    def test_custom_status_defaults_to_available_and_indeterminate(self):
+        definitions = state.build_status_definitions(["foo"])
+        device = state.VirtualSwitchState(
+            status="foo", internal_state=True, definitions=definitions
+        )
+        self.assertTrue(device.main_available)
+        self.assertIsNone(device.main_is_on)
+
+    def test_custom_status_mapping(self):
+        definitions = state.build_status_definitions(
+            ["bekapcs::true", "kikapcs::false", "oops:true:none", "offline:false:true"]
+        )
+        self.assertTrue(definitions["bekapcs"].is_on)
+        self.assertFalse(definitions["kikapcs"].is_on)
+        self.assertIsNone(definitions["oops"].is_on)
+        self.assertFalse(definitions["offline"].available)
+        self.assertIsNone(definitions["offline"].is_on)
+
+    def test_reserved_and_duplicate_custom_statuses_are_rejected(self):
+        with self.assertRaises(ValueError):
+            state.build_status_definitions(["online"])
+        with self.assertRaises(ValueError):
+            state.build_status_definitions(["Unavailable"])
+        with self.assertRaises(ValueError):
+            state.build_status_definitions(["foo", "foo:false"])
+
 
 if __name__ == "__main__":
     unittest.main()
-

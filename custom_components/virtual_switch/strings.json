@@ -3,13 +3,39 @@
     "step": {
       "user": {
         "title": "Add Virtual Switch",
-        "data": {"name": "Name"}
+        "data": {
+          "name": "Name",
+          "custom_statuses": "Custom statuses (<name>[:available][:is_on])"
+        },
+        "data_description": {
+          "custom_statuses": "Enter one status per line, for example: foo, enabled::true, oops:true:none"
+        }
       }
     },
-    "error": {"name_required": "Name is required"},
+    "error": {
+      "name_required": "Name is required",
+      "invalid_custom_statuses": "A custom status is invalid, duplicated, or uses a reserved name"
+    },
     "abort": {
       "already_configured": "A Virtual Switch with this name already exists",
-      "name_required": "Name is required"
+      "name_required": "Name is required",
+      "invalid_custom_statuses": "A custom status is invalid, duplicated, or uses a reserved name"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Virtual Switch statuses",
+        "data": {
+          "custom_statuses": "Custom statuses (<name>[:available][:is_on])"
+        },
+        "data_description": {
+          "custom_statuses": "Enter one status per line, for example: foo, enabled::true, oops:true:none"
+        }
+      }
+    },
+    "error": {
+      "invalid_custom_statuses": "A custom status is invalid, duplicated, or uses a reserved name"
     }
   }
 }

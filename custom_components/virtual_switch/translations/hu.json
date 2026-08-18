@@ -3,13 +3,39 @@
     "step": {
       "user": {
         "title": "Virtual Switch hozzáadása",
-        "data": {"name": "Név"}
+        "data": {
+          "name": "Név",
+          "custom_statuses": "Egyedi állapotok (<név>[:available][:is_on])"
+        },
+        "data_description": {
+          "custom_statuses": "Soronként egy állapot, például: foo, bekapcs::true, oops:true:none"
+        }
       }
     },
-    "error": {"name_required": "A név megadása kötelező"},
+    "error": {
+      "name_required": "A név megadása kötelező",
+      "invalid_custom_statuses": "Hibás vagy ismétlődő egyedi állapot, illetve foglalt állapotnév"
+    },
     "abort": {
       "already_configured": "Már létezik ilyen nevű Virtual Switch",
-      "name_required": "A név megadása kötelező"
+      "name_required": "A név megadása kötelező",
+      "invalid_custom_statuses": "Hibás vagy ismétlődő egyedi állapot, illetve foglalt állapotnév"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Virtual Switch állapotok beállítása",
+        "data": {
+          "custom_statuses": "Egyedi állapotok (<név>[:available][:is_on])"
+        },
+        "data_description": {
+          "custom_statuses": "Soronként egy állapot, például: foo, bekapcs::true, oops:true:none"
+        }
+      }
+    },
+    "error": {
+      "invalid_custom_statuses": "Hibás vagy ismétlődő egyedi állapot, illetve foglalt állapotnév"
     }
   }
 }
