@@ -50,11 +50,15 @@ class MainSwitch(_BaseSwitch):
 
     @property
     def is_on(self) -> bool:
-        return self.controller.reported_state
+        return self.controller.internal_state
+
+    @property
+    def available(self) -> bool:
+        return self.controller.online
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        return {"virtual_switch": True, "device_online": self.controller.online}
+        return {"virtual_switch": True}
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self.controller.async_main(True)
@@ -93,4 +97,3 @@ class OnlineSwitch(_BaseSwitch):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         await self.controller.async_online(False)
-

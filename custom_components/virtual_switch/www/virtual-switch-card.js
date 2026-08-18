@@ -56,8 +56,8 @@ class VirtualSwitchCard extends HTMLElement {
     const mainState = this._hass.states[main];
     const rows = [
       this._hass.states[main] ? { entity: main, name: "Main" } : undefined,
-      this._hass.states[internal] ? { entity: internal, name: "Internal device state" } : undefined,
       this._hass.states[online] ? { entity: online, name: "Online" } : undefined,
+      this._hass.states[internal] ? { entity: internal, name: "Internal device state" } : undefined,
     ].filter(Boolean);
     return {
       type: "entities",

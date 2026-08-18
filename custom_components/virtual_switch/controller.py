@@ -14,16 +14,10 @@ from .const import (
     DEFAULT_INITIAL_ONLINE,
     DEFAULT_INITIAL_STATE,
     DOMAIN,
-    EVENT_GO_OFFLINE,
-    EVENT_GO_ONLINE,
-    EVENT_INTERNAL_OFF,
-    EVENT_INTERNAL_ON,
-    EVENT_MAIN_OFF,
-    EVENT_MAIN_ON,
     STORE_KEY,
     STORE_VERSION,
 )
-from .state_machine import VirtualSwitchStateMachine
+from .state import VirtualSwitchState
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,10 +31,9 @@ class Controller:
         self.store: Store[dict[str, Any]] = Store(
             hass, STORE_VERSION, f"{DOMAIN}/{entry.entry_id}/{STORE_KEY}.json"
         )
-        self.machine = VirtualSwitchStateMachine(
+        self.state = VirtualSwitchState(
             online=bool(entry.data.get(CONF_INITIAL_ONLINE, DEFAULT_INITIAL_ONLINE)),
             internal_state=bool(entry.data.get(CONF_INITIAL_STATE, DEFAULT_INITIAL_STATE)),
-            reported_state=bool(entry.data.get(CONF_INITIAL_STATE, DEFAULT_INITIAL_STATE)),
         )
 
     async def async_setup(self) -> None:
@@ -52,45 +45,40 @@ class Controller:
         if stored is None:
             return
         try:
-            values = (stored["online"], stored["internal_state"], stored["reported_state"])
+            values = (stored["online"], stored["internal_state"])
             if not all(isinstance(value, bool) for value in values):
                 raise ValueError("stored state values must be boolean")
-            self.machine = VirtualSwitchStateMachine(
+            self.state = VirtualSwitchState(
                 online=stored["online"],
                 internal_state=stored["internal_state"],
-                reported_state=stored["reported_state"],
             )
         except (KeyError, TypeError, ValueError) as error:
             _LOGGER.warning("[%s] Invalid stored state, using defaults: %s", self.name, error)
 
     @property
     def online(self) -> bool:
-        return self.machine.online
+        return self.state.online
 
     @property
     def internal_state(self) -> bool:
-        return self.machine.internal_state
-
-    @property
-    def reported_state(self) -> bool:
-        return self.machine.reported_state
+        return self.state.internal_state
 
     async def async_main(self, value: bool) -> None:
-        await self._handle(EVENT_MAIN_ON if value else EVENT_MAIN_OFF)
+        await self._commit(self.state.set_from_main(value))
 
     async def async_internal(self, value: bool) -> None:
-        await self._handle(EVENT_INTERNAL_ON if value else EVENT_INTERNAL_OFF)
+        await self._commit(self.state.set_internal(value))
 
     async def async_online(self, value: bool) -> None:
-        await self._handle(EVENT_GO_ONLINE if value else EVENT_GO_OFFLINE)
+        await self._commit(self.state.set_online(value))
 
-    async def _handle(self, event: str) -> None:
-        await self.machine.handle(event)
+    async def _commit(self, changed: bool) -> None:
+        if not changed:
+            return
         await self.store.async_save(
             {
                 "online": self.online,
                 "internal_state": self.internal_state,
-                "reported_state": self.reported_state,
             }
         )
         async_dispatcher_send(self.hass, self.signal)

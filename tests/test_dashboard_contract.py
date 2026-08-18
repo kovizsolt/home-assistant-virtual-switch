@@ -31,6 +31,23 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn("_online", self.card)
         self.assertIn("loadCardHelpers", self.card)
 
+    def test_main_uses_native_home_assistant_availability(self):
+        switch_source = (COMPONENT / "switch.py").read_text()
+        self.assertIn("def available(self)", switch_source)
+        self.assertIn("return self.controller.online", switch_source)
+        self.assertNotIn("reported_state", switch_source)
+
+    def test_no_state_synchronization_loop_exists(self):
+        controller_source = (COMPONENT / "controller.py").read_text()
+        self.assertNotIn("state_changed", controller_source)
+        self.assertNotIn("reported_state", controller_source)
+        self.assertNotIn("async_track", controller_source)
+
+    def test_main_command_is_a_method_not_a_property(self):
+        controller_source = (COMPONENT / "controller.py").read_text()
+        self.assertNotIn("@property\n    async def async_main", controller_source)
+        self.assertIn("async def async_main(self, value: bool)", controller_source)
+
 
 if __name__ == "__main__":
     unittest.main()
