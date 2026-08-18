@@ -46,7 +46,7 @@ class VirtualSwitchCard extends HTMLElement {
   }
 
   getCardSize() { return 3; }
-  getGridOptions() { return { columns: 6, min_columns: 4 }; }
+  getGridOptions() { return { columns: 9, min_columns: 4 }; }
 
   _configForNativeCard() {
     const main = this._config.entity;
@@ -56,7 +56,7 @@ class VirtualSwitchCard extends HTMLElement {
     const mainState = this._hass.states[main];
     const rows = [
       this._hass.states[main] ? { entity: main, name: "Main switch:" } : undefined,
-      this._hass.states[internal] ? { entity: internal, name: "Internal switch" } : undefined,
+      this._hass.states[internal] ? { entity: internal, name: "Internal switch:" } : undefined,
       this._hass.states[online] ? { entity: online, name: "Online:" } : undefined,
     ].filter(Boolean);
     return {
