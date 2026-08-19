@@ -8,7 +8,7 @@ making it useful for testing automations, failure handling, and other integratio
 
 ## Requirements
 
-- a working Home Assistant installation;
+- Home Assistant 2025.9.4 or newer;
 - access to the Home Assistant `config` directory;
 - permission to restart Home Assistant;
 - the `frontend` and `lovelace` integrations for the custom dashboard card.
@@ -16,6 +16,18 @@ making it useful for testing automations, failure handling, and other integratio
 No external Python package is required.
 
 ## Installation
+
+### HACS (recommended)
+
+1. Open HACS and select **Custom repositories** from the top-right menu.
+2. Add `https://github.com/kovizsolt/home-assistant-virtual-switch` as an
+   **Integration** repository.
+3. Find **Virtual Switch** in HACS and download it.
+4. Restart Home Assistant.
+5. Open **Settings → Devices & services → Add integration**.
+6. Search for **Virtual Switch** and add it.
+
+### Manual installation
 
 1. Copy `custom_components/virtual_switch` into the Home Assistant configuration
    directory so that the resulting path is:

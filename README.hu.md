@@ -8,7 +8,7 @@ ezért automatizálások, hibakezelés és más integrációk tesztelésére is 
 
 ## Követelmények
 
-- működő Home Assistant telepítés;
+- Home Assistant 2025.9.4 vagy újabb;
 - hozzáférés a Home Assistant `config` könyvtárához;
 - újraindítási jogosultság;
 - a saját kártyához a `frontend` és `lovelace` integráció.
@@ -16,6 +16,20 @@ ezért automatizálások, hibakezelés és más integrációk tesztelésére is 
 Külső Python-csomagot nem igényel.
 
 ## Telepítés
+
+### HACS (ajánlott)
+
+1. Nyisd meg a HACS felületét, majd a jobb felső menüben válaszd a
+   **Custom repositories** lehetőséget.
+2. Add hozzá a `https://github.com/kovizsolt/home-assistant-virtual-switch` repót
+   **Integration** típussal.
+3. Keresd meg a HACS-ban a **Virtual Switch** integrációt, majd töltsd le.
+4. Indítsd újra a Home Assistantot.
+5. Nyisd meg a **Beállítások → Eszközök és szolgáltatások → Integráció
+   hozzáadása** oldalt.
+6. Keresd meg a **Virtual Switch** integrációt, majd add hozzá.
+
+### Kézi telepítés
 
 1. Másold a `custom_components/virtual_switch` könyvtárat a Home Assistant
    konfigurációs könyvtárába:
