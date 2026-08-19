@@ -3,9 +3,10 @@
     "step": {
       "user": {
         "title": "Virtual Switch hozzáadása",
+        "description": "Hozz létre egy szimulált kapcsolót a Home Assistant működésének teszteléséhez.",
         "data": {
           "name": "Név",
-          "custom_statuses": "Egyedi állapotok (<név>[:available][:is_on])"
+          "custom_statuses": "Egyedi állapotok (név[:available][:is_on])"
         },
         "data_description": {
           "custom_statuses": "Soronként egy állapot, például: foo, bekapcs::true, oops:true:none"
@@ -27,7 +28,7 @@
       "init": {
         "title": "Virtual Switch állapotok beállítása",
         "data": {
-          "custom_statuses": "Egyedi állapotok (<név>[:available][:is_on])"
+          "custom_statuses": "Egyedi állapotok (név[:available][:is_on])"
         },
         "data_description": {
           "custom_statuses": "Soronként egy állapot, például: foo, bekapcs::true, oops:true:none"

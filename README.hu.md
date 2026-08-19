@@ -46,6 +46,18 @@ Külső Python-csomagot nem igényel.
 Frissítéskor cseréld le a teljes `virtual_switch` könyvtár tartalmát, majd indítsd
 újra a Home Assistantot. A példányok mentett belső állapota megmarad.
 
+### Helyi validáció
+
+Publikálás előtt a repó gyökeréből futtatható minden helyi ellenőrzés:
+
+```bash
+./scripts/validate.sh all
+```
+
+Az egyenként választható módok: `static`, `tests` és `hassfest`. A `hassfest`
+vagy `all` módhoz adott `--no-pull` kapcsoló a már letöltött Docker image-et
+használja annak frissítése nélkül.
+
 ## Konfiguráció
 
 Az integráció a Home Assistant felületén konfigurálható; nem igényel

@@ -1,17 +1,18 @@
 {
   "domain": "virtual_switch",
   "name": "Virtual Switch",
-  "version": "0.2.0005",
-  "documentation": "https://github.com/kovizsolt/home-assistant-virtual-switch",
-  "issue_tracker": "https://github.com/kovizsolt/home-assistant-virtual-switch/issues",
   "codeowners": [
     "@kovizsolt"
   ],
+  "config_flow": true,
   "dependencies": [
     "frontend",
+    "http",
     "lovelace"
   ],
+  "documentation": "https://github.com/kovizsolt/home-assistant-virtual-switch",
   "integration_type": "helper",
   "iot_class": "local_push",
-  "config_flow": true
+  "issue_tracker": "https://github.com/kovizsolt/home-assistant-virtual-switch/issues",
+  "version": "0.2.0005"
 }

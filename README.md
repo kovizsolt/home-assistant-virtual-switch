@@ -43,6 +43,17 @@ No external Python package is required.
 To update, replace the complete `virtual_switch` directory and restart Home
 Assistant. Saved internal states are retained.
 
+### Local validation
+
+Before publishing, run every local check from the repository root:
+
+```bash
+./scripts/validate.sh all
+```
+
+Individual modes are `static`, `tests`, and `hassfest`. Add `--no-pull` to the
+Hassfest or `all` mode to use the locally cached Docker image.
+
 ## Configuration
 
 The integration is configured through the Home Assistant UI and requires no

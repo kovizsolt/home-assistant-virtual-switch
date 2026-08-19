@@ -3,9 +3,10 @@
     "step": {
       "user": {
         "title": "Add Virtual Switch",
+        "description": "Create a simulated switch for testing Home Assistant behavior.",
         "data": {
           "name": "Name",
-          "custom_statuses": "Custom statuses (<name>[:available][:is_on])"
+          "custom_statuses": "Custom statuses (name[:available][:is_on])"
         },
         "data_description": {
           "custom_statuses": "Enter one status per line, for example: foo, enabled::true, oops:true:none"
@@ -27,7 +28,7 @@
       "init": {
         "title": "Configure Virtual Switch statuses",
         "data": {
-          "custom_statuses": "Custom statuses (<name>[:available][:is_on])"
+          "custom_statuses": "Custom statuses (name[:available][:is_on])"
         },
         "data_description": {
           "custom_statuses": "Enter one status per line, for example: foo, enabled::true, oops:true:none"
