@@ -1,73 +1,72 @@
 # Virtual Switch
 
-A Virtual Switch egy állapottartó, szimulált Home Assistant kapcsoló. Külön
-kezeli a belső kapcsolóállást és a szimulált eszköz elérhetőségét/állapotát,
-ezért automatizálások, hibakezelés és más integrációk tesztelésére is alkalmas.
+[Magyar dokumentáció](README.hu.md) · [Changelog](CHANGELOG.md)
 
-## Követelmények
+Virtual Switch is a stateful, simulated switch for Home Assistant. It keeps its
+internal ON/OFF state separate from the simulated device status and availability,
+making it useful for testing automations, failure handling, and other integrations.
 
-- működő Home Assistant telepítés;
-- hozzáférés a Home Assistant `config` könyvtárához;
-- újraindítási jogosultság;
-- a saját kártyához a `frontend` és `lovelace` integráció.
+## Requirements
 
-Külső Python-csomagot nem igényel.
+- a working Home Assistant installation;
+- access to the Home Assistant `config` directory;
+- permission to restart Home Assistant;
+- the `frontend` and `lovelace` integrations for the custom dashboard card.
 
-## Telepítés
+No external Python package is required.
 
-1. Másold a `custom_components/virtual_switch` könyvtárat a Home Assistant
-   konfigurációs könyvtárába:
+## Installation
+
+1. Copy `custom_components/virtual_switch` into the Home Assistant configuration
+   directory so that the resulting path is:
 
    ```text
    <config>/custom_components/virtual_switch/
    ```
 
-2. Indítsd újra a Home Assistantot.
-3. Nyisd meg a **Beállítások → Eszközök és szolgáltatások → Integráció
-   hozzáadása** oldalt.
-4. Keresd meg a **Virtual Switch** integrációt, majd add hozzá.
+2. Restart Home Assistant.
+3. Open **Settings → Devices & services → Add integration**.
+4. Search for **Virtual Switch** and add it.
 
-Frissítéskor cseréld le a teljes `virtual_switch` könyvtár tartalmát, majd indítsd
-újra a Home Assistantot. A példányok mentett belső állapota megmarad.
+To update, replace the complete `virtual_switch` directory and restart Home
+Assistant. Saved internal states are retained.
 
-## Konfiguráció
+## Configuration
 
-Az integráció a Home Assistant felületén konfigurálható; nem igényel
-`configuration.yaml` bejegyzést.
+The integration is configured through the Home Assistant UI and requires no
+`configuration.yaml` entry.
 
-Új példánynál add meg:
+For each new instance, enter:
 
-- **Név:** az eszköz és a létrejövő entitások neveinek alapja;
-- **Egyedi állapotok:** opcionális, soronként egy állapot az alábbi formában:
-  `<név>[:available][:is_on]`.
+- **Name:** base name for the device and its entities;
+- **Custom statuses:** optional, one status per line in the format
+  `<name>[:available][:is_on]`.
 
-A név után megadható, hogy a főkapcsoló elérhető legyen-e, illetve milyen
-kapcsolóállapotot mutasson. Az értékek `true`, `false` vagy az `is_on` mezőben
-`none` lehetnek. Az üres mezők alapértéke: `available=true`, `is_on=none`.
+After the name, specify whether the main switch is available and which switch state
+it reports. Values may be `true` or `false`; the `is_on` field also accepts `none`.
+Empty fields default to `available=true` and `is_on=none`.
 
 ```text
-karbantartas:false
-beragadt_be:true:true
-hiba_jelzes:true:none
+maintenance:false
+stuck_on:true:true
+fault_signal:true:none
 ```
 
-A `false` elérhetőség mindig `unavailable` főkapcsolót eredményez, ezért ilyenkor
-az `is_on` értékét az integráció figyelmen kívül hagyja. A rögzített állapotnevek
-(`online`, `unavailable`, `unknown`, `error`) nem használhatók egyedi névként, és
-az állapotnevek kis- és nagybetűtől függetlenül egyediek.
+When availability is `false`, the main switch is always `unavailable`, so `is_on`
+is ignored. Reserved status names (`online`, `unavailable`, `unknown`, and `error`)
+cannot be used for custom statuses. Names must be unique regardless of letter case.
 
-Az egyedi állapotok később a **Beállítások → Eszközök és szolgáltatások → Virtual
-Switch → Konfigurálás** útvonalon módosíthatók. A mentés után az integrációpéldány
-újratöltődik.
+Custom statuses can later be changed under **Settings → Devices & services → Virtual
+Switch → Configure**. Saving the options reloads the integration instance.
 
-## UI megjelenítés
+## Dashboard display
 
-Az integráció egy **Virtual Switch Card** nevű egyedi dashboard-kártyát tartalmaz.
-Storage módban az erőforrás automatikusan regisztrálódik. Dashboard szerkesztésekor
-válaszd a **Kártya hozzáadása → Virtual Switch Card** elemet, majd a példány
-`switch.<név>_main` entitását.
+The integration includes a custom **Virtual Switch Card**. In Lovelace storage mode,
+the resource is registered automatically. While editing a dashboard, select
+**Add card → Virtual Switch Card**, then select the instance's
+`switch.<name>_main` entity.
 
-YAML dashboard vagy YAML erőforrásmód esetén add hozzá kézzel:
+In YAML dashboard or YAML resource mode, add the resource manually:
 
 ```yaml
 lovelace:
@@ -76,63 +75,63 @@ lovelace:
       type: module
 ```
 
-A kártya YAML konfigurációja:
+Card configuration in YAML:
 
 ```yaml
 type: custom:virtual-switch-card
-entity: switch.teszt_kapcsolo_main
+entity: switch.test_switch_main
 ```
 
-A kártyán a főkapcsoló, a belső kapcsoló és a választható eszközállapotok együtt
-jelennek meg.
+The card displays the main switch, internal switch, and selectable simulated device
+statuses together.
 
-## Használat
+## Usage
 
-Minden példány három entitást hoz létre:
+Each instance creates three entities:
 
-| Entitás | Szerep |
+| Entity | Purpose |
 |---|---|
-| `switch.<név>_main` | A szimulált eszköz kívülről használt főkapcsolója |
-| `switch.<név>_internal` | A ténylegesen megőrzött belső BE/KI állapot |
-| `select.<név>_status` | Az elérhetőség és a kijelzett állapot szimulálása |
+| `switch.<name>_main` | Main switch exposed by the simulated device |
+| `switch.<name>_internal` | Persisted internal ON/OFF state |
+| `select.<name>_status` | Simulates availability and reported state |
 
-A rögzített státuszok viselkedése:
+Built-in status behavior:
 
-| Státusz | Főkapcsoló |
+| Status | Main switch behavior |
 |---|---|
-| `Online` | Elérhető, és a belső kapcsoló állapotát mutatja |
-| `Unavailable` | `unavailable`, nem vezérelhető a főkapcsolón keresztül |
-| `Unknown` | Elérhető, állapota `unknown` |
-| `Error` | Elérhető, állapota `unknown`; külön tesztállapotként megkülönböztethető |
+| `Online` | Available and reports the internal switch state |
+| `Unavailable` | `unavailable`; cannot be controlled through the main switch |
+| `Unknown` | Available with an `unknown` state |
+| `Error` | Available with an `unknown` state; remains a distinct test status |
 
-Online állapotban a főkapcsoló módosítása a belső kapcsolót is módosítja. Más
-státuszban a főkapcsolón küldött BE/KI parancs nem változtatja meg a belső
-állapotot. Az `Internal` kapcsoló viszont minden státuszban állítható, így előre
-beállítható, milyen állapottal térjen vissza az eszköz, amikor ismét `Online` lesz.
+While Online, changing the main switch also changes the internal switch. In any
+other status, ON/OFF commands sent to the main switch do not change the internal
+state. The `Internal` switch remains controllable in every status, allowing you to
+prepare the state that will be reported when the device returns Online.
 
-A státusz és a belső kapcsolóállás újraindítás után visszaáll. Az entitások egy
-közös Home Assistant-eszközhöz tartoznak, ezért automatizálásokban, scriptekben és
-a fejlesztői eszközökben a szokásos `switch.turn_on`, `switch.turn_off` és
-`select.select_option` szolgáltatásokkal használhatók.
+Status and internal switch state are restored after a restart. All entities belong
+to one Home Assistant device and can be used in automations, scripts, and developer
+tools through the standard `switch.turn_on`, `switch.turn_off`, and
+`select.select_option` actions.
 
-## Példa automatizálás teszteléséhez
+## Automation test example
 
-Az alábbi művelet elérhetetlenné teszi a szimulált eszközt:
+This action makes the simulated device unavailable:
 
 ```yaml
 action: select.select_option
 target:
-  entity_id: select.teszt_kapcsolo_status
+  entity_id: select.test_switch_status
 data:
   option: Unavailable
 ```
 
-A visszaállításhoz válaszd az `Online` opciót. A rögzített státuszok a Select
-entitásban nagy kezdőbetűvel jelennek meg.
+Select `Online` to restore availability. Built-in statuses appear title-cased in the
+Select entity.
 
-## Eltávolítás
+## Removal
 
-A **Beállítások → Eszközök és szolgáltatások → Virtual Switch** oldalon töröld az
-összes példányt, indítsd újra a Home Assistantot, majd távolítsd el a
-`<config>/custom_components/virtual_switch` könyvtárat. A példány törlése a hozzá
-tartozó mentett állapotot is eltávolítja.
+Remove every instance under **Settings → Devices & services → Virtual Switch**,
+restart Home Assistant, and then remove
+`<config>/custom_components/virtual_switch`. Removing an instance also removes its
+stored state.

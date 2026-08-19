@@ -1,0 +1,28 @@
+# Changelog
+
+All notable changes to Virtual Switch will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Versions use the project's `major.minor.build` numbering scheme.
+
+## [Unreleased]
+
+### Added
+
+- English and Hungarian user documentation.
+
+## [0.2.0005] - 2026-08-19
+
+### Added
+
+- Stateful simulated main and internal switches.
+- Built-in Online, Unavailable, Unknown, and Error statuses.
+- User-defined statuses with configurable availability and reported ON/OFF state.
+- Persistent status and internal state across Home Assistant restarts.
+- Virtual Switch dashboard card.
+- Home Assistant device grouping and integration branding.
+
+### Fixed
+
+- Validation, persistence, and display of custom statuses.
+- Dashboard card selection and layout behavior.
