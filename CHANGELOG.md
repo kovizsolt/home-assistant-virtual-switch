@@ -2,8 +2,7 @@
 
 All notable changes to Virtual Switch will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-Versions use the project's `major.minor.build` numbering scheme.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions use the project's `major.minor.build` numbering scheme.
 
 ## [Unreleased]
 

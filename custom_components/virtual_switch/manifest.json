@@ -14,5 +14,5 @@
   "integration_type": "helper",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/kovizsolt/home-assistant-virtual-switch/issues",
-  "version": "0.2.0006"
+  "version": "0.2.0008"
 }

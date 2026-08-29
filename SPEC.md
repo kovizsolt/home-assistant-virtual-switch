@@ -2,8 +2,7 @@
 
 ## 1. Cél
 
-A `virtual_switch` integráció egy valós smart kapcsoló elérhetőségét és belső állapotát
-szimulálja. Egy config entry egy Device-ot, két switch entitást és egy select entitást hoz létre:
+A `virtual_switch` integráció egy valós smart kapcsoló elérhetőségét és belső állapotát szimulálja. Egy config entry egy Device-ot, két switch entitást és egy select entitást hoz létre:
 
 | Entitás | Szerep |
 |---|---|
@@ -20,8 +19,7 @@ Két állapotérték tárolódik:
 | `internal_state` | `False` | Az egyetlen on/off állapot-igazságforrás. |
 | `status` | `online` | A szimulált eszköz kiválasztott státusza. |
 
-Nincs külön `main_state`, `reported_state`, utoljára ismert állapot vagy szinkronizáló
-állapotgép.
+Nincs külön `main_state`, `reported_state`, utoljára ismert állapot vagy szinkronizáló állapotgép.
 
 ## 3. Entitásviselkedés
 
@@ -57,8 +55,7 @@ Nincs külön `main_state`, `reported_state`, utoljára ismert állapot vagy szi
 | `error` | `True` | `None` → `unknown` |
 | custom | konfigurált, alapból `True` | konfigurált, alapból `None` |
 
-Minden művelet idempotens. Egy tényleges változás pontosan egy mentést és egy
-dispatcher-frissítést okoz; változatlan érték beállítása egyiket sem.
+Minden művelet idempotens. Egy tényleges változás pontosan egy mentést és egy dispatcher-frissítést okoz; változatlan érték beállítása egyiket sem.
 
 ## 5. Perzisztencia
 
@@ -66,16 +63,14 @@ dispatcher-frissítést okoz; változatlan érték beállítása egyiket sem.
 - A régi boolean `online` tárolóérték betöltéskor `online`/`unavailable` státuszra migrálódik.
 - Újraindítás után mindkét érték visszaáll.
 - Hiányzó tároló esetén a kezdőértékek használatosak.
-- Sérült vagy érvénytelen tároló esetén figyelmeztetés naplózandó és a kezdőértékek
-  használatosak.
+- Sérült vagy érvénytelen tároló esetén figyelmeztetés naplózandó és a kezdőértékek használatosak.
 - Config entry törlésekor a saját Store törlendő.
 
 ## 6. UI és dashboard-kártya
 
 - A config flow teljesen UI-alapú és a példány nevét kéri.
 - Mindhárom entitás egy közös Device-hoz tartozik.
-- A `custom:virtual-switch-card` megjelenik a grafikus kártyaválasztóban, YAML nélkül
-  hozzáadható, és a grafikus szerkesztő a VirtualSwitch Main entitásaira szűr.
+- A `custom:virtual-switch-card` megjelenik a grafikus kártyaválasztóban, YAML nélkül hozzáadható, és a grafikus szerkesztő a VirtualSwitch Main entitásaira szűr.
 - Egy Main entity ID-ból automatikusan megtalálja az Internal és Status entitást.
 - A státuszgombok a szabványos `select.select_option` műveletet hívják.
 - A resource automatikusan, verzióparaméterrel regisztrálódik.
