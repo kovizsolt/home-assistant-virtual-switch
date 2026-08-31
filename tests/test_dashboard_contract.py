@@ -19,6 +19,9 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn("async_register_static_paths", self.init)
         self.assertIn("async_create_item", self.init)
 
+    def test_integration_entries_are_visible_on_the_integrations_dashboard(self):
+        self.assertEqual(self.manifest["integration_type"], "device")
+
     def test_card_is_available_in_graphical_picker(self):
         self.assertIn("window.customCards", self.card)
         self.assertIn("getConfigForm", self.card)
