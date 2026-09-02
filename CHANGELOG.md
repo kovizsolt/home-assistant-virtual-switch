@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Classified each config entry as a device so the integration remains visible on the Home Assistant Integrations dashboard.
+- Aligned the minimum supported Home Assistant version with Timed Switch at 2026.8.2.
 
 ## [0.3.0008] - 2026-08-29
 

@@ -6,7 +6,7 @@ A Virtual Switch egy állapottartó, szimulált Home Assistant kapcsoló. Külö
 
 ## Követelmények
 
-- Home Assistant 2025.9.4 vagy újabb;
+- Home Assistant 2026.8.2 vagy újabb;
 - hozzáférés a Home Assistant `config` könyvtárához;
 - újraindítási jogosultság;
 - a saját kártyához a `frontend` és `lovelace` integráció.

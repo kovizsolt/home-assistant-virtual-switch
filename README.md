@@ -6,7 +6,7 @@ Virtual Switch is a stateful, simulated switch for Home Assistant. It keeps its 
 
 ## Requirements
 
-- Home Assistant 2025.9.4 or newer;
+- Home Assistant 2026.8.2 or newer;
 - access to the Home Assistant `config` directory;
 - permission to restart Home Assistant;
 - the `frontend` and `lovelace` integrations for the custom dashboard card.
