@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.0021] - 2026-09-07
+
 ### Fixed
 
 - The dashboard card title now comes from the Home Assistant device registry instead of parsing the Main entity's display name, so entity-label changes cannot alter the card title.
