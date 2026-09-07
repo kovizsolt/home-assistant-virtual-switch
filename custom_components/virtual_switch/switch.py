@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -44,6 +44,8 @@ class _BaseSwitch(SwitchEntity):
 
 
 class MainSwitch(_BaseSwitch):
+    _attr_device_class = SwitchDeviceClass.SWITCH
+
     def __init__(self, controller: Controller, slug: str) -> None:
         super().__init__(controller, slug, SUFFIX_MAIN, "Main")
         self._attr_icon = "mdi:toggle-switch"

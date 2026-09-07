@@ -28,6 +28,23 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn("getStubConfig", self.card)
         self.assertIn("getEntitySuggestion", self.card)
         self.assertIn('integration: "virtual_switch"', self.card)
+        self.assertIn('device_class: "switch"', self.card)
+
+        switch_source = (COMPONENT / "switch.py").read_text()
+        self.assertIn("from homeassistant.components.switch import SwitchDeviceClass", switch_source)
+        main_start = switch_source.index("class MainSwitch")
+        main_end = switch_source.index("class InternalSwitch", main_start)
+        self.assertIn(
+            "_attr_device_class = SwitchDeviceClass.SWITCH",
+            switch_source[main_start:main_end],
+        )
+
+    def test_card_title_uses_device_registry_name(self):
+        self.assertIn("this._hass.entities?.[ids.main]", self.card)
+        self.assertIn("this._hass.devices?.[entityRegistryEntry.device_id]", self.card)
+        self.assertIn("device?.name_by_user", self.card)
+        self.assertIn("device?.name", self.card)
+        self.assertNotIn("friendly_name?.replace", self.card)
 
     def test_card_discovers_main_internal_and_status(self):
         self.assertIn("_internal", self.card)

@@ -11,7 +11,15 @@ class VirtualSwitchCard extends HTMLElement {
       schema: [{
         name: "entity",
         required: true,
-        selector: { entity: { filter: { domain: "switch", integration: "virtual_switch" } } },
+        selector: {
+          entity: {
+            filter: {
+              domain: "switch",
+              integration: "virtual_switch",
+              device_class: "switch",
+            },
+          },
+        },
       }],
       computeLabel: () => "Virtual Switch instance (Main)",
       assertConfig: (config) => {
@@ -152,9 +160,13 @@ class VirtualSwitchCard extends HTMLElement {
   _render() {
     if (!this._hass || !this._config || !this._card) return;
     const ids = this._entityIds();
-    const main = this._hass.states[ids.main];
+    const entityRegistryEntry = this._hass.entities?.[ids.main];
+    const device = entityRegistryEntry?.device_id
+      ? this._hass.devices?.[entityRegistryEntry.device_id]
+      : undefined;
     this._card.header = this._config.name
-      || main?.attributes?.friendly_name?.replace(/ Main$/, "")
+      || device?.name_by_user
+      || device?.name
       || "Virtual Switch";
     this._renderSwitch(this._mainRow, ids.main);
     this._renderSwitch(this._internalRow, ids.internal);
