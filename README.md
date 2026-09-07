@@ -24,6 +24,8 @@ No external Python package is required.
 5. Open **Settings → Devices & services → Add integration**.
 6. Search for **Virtual Switch** and add it.
 
+To test a GitHub prerelease, open the downloaded repository's **Redownload** dialog, expand **Need a different version?**, and select the version marked `pre-release`. Prereleases are opt-in and are not offered as normal stable updates.
+
 ### Manual installation
 
 1. Copy `custom_components/virtual_switch` into the Home Assistant configuration directory so that the resulting path is:
